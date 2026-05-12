@@ -3,38 +3,43 @@
 ## Table of Contents
 
 - [1. Overview](#1-overview)
-- [2. First Time App Release (Initial Launch)](#2-first-time-app-release-initial-launch)
-  - [2.1 Purpose](#21-purpose-what-you-are-doing-here)
-  - [2.2 Setup Phase](#22-setup-phase-prepare-google-play-side-first)
-  - [2.3 Build Preparation](#23-build-preparation-make-app-ready-for-release)
-  - [2.4 Store Listing Preparation](#24-store-listing-preparation-what-users-will-see-on-google-play)
-  - [2.5 Upload & Submission](#25-upload--submission-send-app-to-google-play)
-  - [2.6 Release](#26-release-go-live)
-- [3. Follow-Up Release (Update / Version Upgrade)](#3-follow-up-release-update--version-upgrade)
+- [2. First Time App Release (Initial Launch — Android / Google Play)](#2-first-time-app-release-initial-launch--android--google-play)
+  - [2.1 Purpose](#21-purpose-what-this-is-for)
+  - [2.2 Setup Phase](#22-setup-phase-prepare-google-play-account-first)
+  - [2.3 Connect Signing to Gradle](#23-connect-signing-to-gradle-make-android-build-signed)
+  - [2.4 Build Preparation](#24-build-preparation-make-app-ready)
+  - [2.5 Store Listing Setup](#25-store-listing-setup-what-users-will-see)
+  - [2.6 Upload & First Release](#26-upload--first-release)
+  - [2.7 Release (Go Live)](#27-release-go-live)
+- [3. Follow-Up Release (Update / Version Upgrade — Android)](#3-follow-up-release-update--version-upgrade--android)
   - [3.1 Purpose](#31-purpose-what-this-is-for)
   - [3.2 Code Update](#32-code-update-do-your-changes-first)
   - [3.3 Version Update](#33-version-update-very-important-step)
-  - [3.4 Build & Upload Preparation](#34-build--upload-preparation)
+  - [3.4 Build Preparation](#34-build-preparation-make-app-ready-again)
   - [3.5 Submission](#35-submission-send-new-version-to-google-play)
   - [3.6 Release](#36-release-go-live-1)
+  - [Summary of Update Release Flow](#summary-of-update-release-flow)
 - [4. Monitoring Phase (Post-Release)](#4-monitoring-phase-post-release)
   - [4.1 Purpose](#41-purpose-what-this-is-for-1)
-  - [4.2 Stability Monitoring](#42-stability-monitoring-check-if-app-is-healthy)
-  - [4.3 User Feedback](#43-user-feedback-what-users-are-saying)
-  - [4.4 Analytics Monitoring](#44-analytics-monitoring-understand-user-behavior)
-  - [4.5 Incident Handling](#45-incident-handling-what-to-do-when-something-breaks)
-  - [Summary of Monitoring Phase](#summary-of-monitoring-phase)
+  - [4.2 Immediate Post-Release Verification](#42-immediate-post-release-verification-first-12-hours)
+  - [4.3 Stability Monitoring](#43-stability-monitoring-daily-monitoring)
+  - [4.4 User Feedback Monitoring](#44-user-feedback-monitoring)
+  - [4.5 Analytics Monitoring](#45-analytics-monitoring-understand-user-behavior)
+  - [4.6 Security & Store Monitoring](#46-security--store-monitoring)
+  - [4.7 Incident Handling](#47-incident-handling-what-to-do-when-something-breaks)
+  - [4.8 Summary of Monitoring Phase](#48-summary-of-monitoring-phase)
 - [5. Hotfix & Emergency Release Flow](#5-hotfix--emergency-release-flow)
   - [5.1 Purpose](#51-purpose-what-this-is-for-2)
-  - [5.2 Identify the Problem](#52-identify-the-problem-confirm-it-is-really-urgent)
-  - [5.3 Create Hotfix Branch](#53-create-hotfix-branch-start-fixing-immediately)
-  - [5.4 Increase Version](#54-increase-version-required-before-upload)
-  - [5.5 Build Hotfix Version](#55-build-hotfix-version)
-  - [5.6 Upload Hotfix to Google Play](#56-upload-hotfix-to-google-play)
-  - [5.7 Fast Review & Rollout](#57-fast-review--rollout-important-for-emergencies)
-  - [5.8 Release Hotfix](#58-release-hotfix)
-  - [5.9 Post Hotfix Review](#59-post-hotfix-review-very-important)
-  - [Summary of Hotfix Flow](#summary-of-hotfix-flow)
+  - [5.2 Confirm the Issue First](#52-confirm-the-issue-first-do-not-panic-release)
+  - [5.3 Create Hotfix Branch](#53-create-hotfix-branch)
+  - [5.4 Testing Before Release](#54-testing-before-release-never-skip-even-during-emergency)
+  - [5.5 Version Update](#55-version-update-required-before-upload)
+  - [5.6 Build Hotfix Release](#56-build-hotfix-release)
+  - [5.7 Upload Emergency Release](#57-upload-emergency-release)
+  - [5.8 Rollout Strategy](#58-rollout-strategy-very-important)
+  - [5.9 Communication During Incident](#59-communication-during-incident)
+  - [5.10 Post-Incident Review](#510-post-incident-review-very-important)
+  - [5.11 Summary of Hotfix Flow](#511-summary-of-hotfix-flow)
 
 ---
 
@@ -44,8 +49,8 @@ This document defines a simplified, role-based workflow for publishing and maint
 
 It is structured into four main operational modes:
 
-1. **First Time Release** — initial launch → [Section 2](#2-first-time-app-release-initial-launch)  
-2. **Follow-Up Release** — updates / new versions → [Section 3](#3-follow-up-release-update--version-upgrade)  
+1. **First Time Release** — initial launch → [Section 2](#2-first-time-app-release-initial-launch--android--google-play)  
+2. **Follow-Up Release** — updates / new versions → [Section 3](#3-follow-up-release-update--version-upgrade--android)  
 3. **Monitoring Phase** — post-release operations → [Section 4](#4-monitoring-phase-post-release)  
 4. **Hotfix / Emergency Phase** — maintenance when production is broken → [Section 5](#5-hotfix--emergency-release-flow)  
 
@@ -53,83 +58,88 @@ Each section is designed so developers only follow what is relevant to their cur
 
 ---
 
-## 2. First Time App Release (Initial Launch)
+## 2. First Time App Release (Initial Launch — Android / Google Play)
 
-### 2.1 Purpose (What you are doing here)
+### 2.1 Purpose (What this is for)
 
-In this stage, you are preparing everything needed to put your Flutter app on **Google Play** for the very first time.
+This is the first time you want to publish your Flutter app to **Google Play**.
 
-Think of it like this: you are not just building the app — you are also setting up Google’s console, signing, and policies so Play accepts your app.
+Think of it like:  
+👉 **You are not just building the app — you are also preparing Google’s system to accept it.**
 
-### 2.2 Setup Phase (Prepare Google Play Side First)
+You will be doing:
 
-**Step 1: Google Play Console access**
+- Google Play setup  
+- App signing setup  
+- First release build  
+- Upload to Play Console  
+- First review submission  
 
-Sign in to [Google Play Console](https://play.google.com/console) and make sure:
+### 2.2 Setup Phase (Prepare Google Play Account First)
 
-- You can access the correct developer account (personal or organization)  
-- You have permission to create apps and manage releases (often **Admin** or **Release manager**)  
+**Step 1: Login to Google Play Console**
 
-If you cannot create an app or open **Policy** / **Release** sections, ask your Play Console admin.
+Go to [Google Play Console](https://play.google.com/console) and make sure:
 
-**Step 2: Create the app listing**
+- You are using the correct developer account  
+- You have permission to create and publish apps (**Admin** / **Release Manager**)  
 
-In Play Console, click **Create app** and complete the initial questionnaire (app name, default language, app / game, free or paid).
+If you cannot create apps, ask your account owner.
 
-You will get an empty **app** with its own Play Console dashboard. The **package name** (application ID) is chosen at creation time and **cannot be changed later** — it must match your Flutter Android project (`applicationId` in `android/app/build.gradle.kts` or `android/app/build.gradle`).
+**Step 2: Create New App**
 
-**Step 3: Signing — upload keystore and `key.properties` (where many teams get stuck)**
+In Play Console:
 
-Google Play needs a **signed** release build. With **Play App Signing** (default), you keep an **upload key**; Google holds the app-signing key that end users receive.
+- Click **Create app**  
 
-Follow **either** Option A **or** Option B below. When that option is done, continue with **Common steps** in order.
+Fill in:
 
-**Rules (always)**
+- App name  
+- Default language  
+- App type (App / Game)  
+- Free or Paid  
 
-- Never commit `key.properties`, keystore files, or passwords to Git.  
-- Back up the keystore and passwords in a team password manager. **Losing the upload key** (without going through Google’s reset process) **can block future updates.**  
-- In CI, inject `key.properties` or secrets from your secret store — do not hardcode in the repo.  
+After this, Google will create your app dashboard.
 
-**Option A — Use a keystore your team already created**
+**Important:**  
+👉 The **package name** (`applicationId`) is fixed here and **cannot change later**.
 
-**Step 1:** Confirm you have all four: the keystore file (`.jks` or `.keystore`), **store password**, **key password**, and **key alias** (e.g. `upload`). If anything is missing, ask whoever owns release signing.
+**Step 3: Setup App Signing (Very Important Step)**
 
-**Step 2:** Copy the keystore into your Flutter project. Pick one location and stay consistent:
+Google uses **Play App Signing**, which means:
 
-- **`android/upload-keystore.jks`** — then in `key.properties` use `storeFile=../upload-keystore.jks` (Gradle resolves this from `android/app/build.gradle`).  
-- **`android/app/upload-keystore.jks`** — then use `storeFile=upload-keystore.jks`.
+- Google stores the final signing key  
+- You only upload an **upload key**  
 
-**Step 3:** Create **`android/key.properties`** at the **android** root (next to `settings.gradle`, **not** inside `android/app/`). Example when the file is **`android/upload-keystore.jks`**:
+You will need:
 
-```properties
-storePassword=YOUR_STORE_PASSWORD
-keyPassword=YOUR_KEY_PASSWORD
-keyAlias=upload
-storeFile=../upload-keystore.jks
-```
+- Keystore file (`.jks` / `.keystore`)  
+- `key.properties` file (password config)  
 
-Replace `YOUR_*` and `keyAlias` with your real values. If the keystore lives under **`android/app/`**, use `storeFile=upload-keystore.jks` instead.
+**Step 4: Create or Configure Keystore**
 
-Then go to **Common steps** below.
-
----
-
-**Option B — Create a new upload keystore (first app or new key)**
-
-**Step 1:** Install a **JDK** (or use Android Studio’s bundled JDK) so `keytool` is available in a terminal. On macOS/Linux you can run `keytool -help` to verify.
-
-**Step 2:** Open a terminal, go to your app’s **`android/`** folder, and generate the keystore:
+If you don’t have a keystore yet, go to the **`android/`** folder and run:
 
 ```bash
 cd android
 keytool -genkey -v -keystore upload-keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 ```
 
-Answer the prompts. You choose **keystore password** and **key password** (they may be the same). The **alias** in the command is `upload` unless you change `-alias` — whatever you use must match `keyAlias` in the next steps.
+You will be asked for:
 
-**Step 3:** Store **keystore password**, **key password**, and **alias** in your team password manager. You will need them for every release build.
+- Password for keystore  
+- Key password  
+- Alias name  
 
-**Step 4:** Create **`android/key.properties`** at the **android** root (same place as in Option A). Because `upload-keystore.jks` was created inside **`android/`**, use:
+👉 **Save all passwords safely** — they are very important; recovery is difficult or impossible if lost.
+
+**Step 5: Create `key.properties` file**
+
+Create the file:
+
+`android/key.properties`
+
+Add:
 
 ```properties
 storePassword=YOUR_STORE_PASSWORD
@@ -138,17 +148,11 @@ keyAlias=upload
 storeFile=../upload-keystore.jks
 ```
 
-If you later move the keystore into **`android/app/`**, change `storeFile` to `upload-keystore.jks` to match.
+Adjust `storeFile` if your keystore path differs (paths are resolved from `android/app/` when Gradle uses `file(...)` in `android/app/build.gradle` — e.g. use `upload-keystore.jks` if the file lives in `android/app/`).
 
-**Step 5:** (Optional) If your security policy forbids keeping the `.jks` under the repo folder, move it to a secure path and set `storeFile` to an **absolute** path in `key.properties` for local builds; CI should copy or mount the keystore and generate `key.properties` without committing it.
+**Step 6: Ignore secrets in Git**
 
-Then go to **Common steps** below.
-
----
-
-**Common steps (after Option A or Option B)**
-
-**Step 1:** Add secrets to **`android/.gitignore`** so they are never committed:
+Open `android/.gitignore` and make sure you add:
 
 ```gitignore
 key.properties
@@ -156,7 +160,15 @@ key.properties
 *.keystore
 ```
 
-**Step 2:** Wire **Gradle** to read `key.properties`. Flutter’s [Sign the app](https://docs.flutter.dev/deployment/android#sign-the-app) guide has the full example. For **`android/app/build.gradle`** (Groovy), add **above** `android {`:
+👉 **Never push the keystore or `key.properties` to Git.**
+
+### 2.3 Connect Signing to Gradle (Make Android Build Signed)
+
+**Step 1: Load `key.properties` in Gradle**
+
+Open `android/app/build.gradle` (or your Groovy Gradle entry for the `app` module).
+
+Add this **above** `android {`:
 
 ```groovy
 def keystoreProperties = new Properties()
@@ -166,7 +178,9 @@ if (keystorePropertiesFile.exists()) {
 }
 ```
 
-Inside **`android {`**, add:
+**Step 2: Add signing config**
+
+Inside `android {`:
 
 ```groovy
     signingConfigs {
@@ -179,232 +193,234 @@ Inside **`android {`**, add:
     }
 ```
 
-Inside **`buildTypes { release { ... } }`**, set:
+**Step 3: Enable release signing**
+
+Inside `buildTypes`:
 
 ```groovy
+        release {
             signingConfig signingConfigs.release
+        }
 ```
 
-If you use **`build.gradle.kts`**, apply the same pattern with Kotlin DSL (load `Properties` from `rootProject.file("key.properties")` and assign `signingConfigs.getByName("release")`).
+If you use Kotlin DSL (`build.gradle.kts`), apply the same idea with the Kotlin Gradle APIs. See Flutter’s [Sign the app](https://docs.flutter.dev/deployment/android#sign-the-app) guide.
 
-**Step 3:** Verify signing end-to-end:
-
-- Run **`flutter build appbundle --release`**. If it fails, re-check `key.properties` location, `storeFile` path (relative to `android/app/`), alias, and passwords.  
-- Plan for the **first** Play upload: accept **Play App Signing** when Play Console prompts you, and keep the **upload** keystore backed up.  
-- Confirm **`applicationId` / namespace** matches the Play Console package name **exactly**, and that **`minSdk`**, **`targetSdk`**, and **`compileSdk`** meet [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk) (policy updates over time).
-
-**Step 4: (Recommended) Internal testing track first**
-
-Before production, create an **internal testing** release with a small group. This verifies upload signing, installability, and basic flows without exposing the app to the public store.
-
-### 2.3 Build Preparation (Make App Ready for Release)
+### 2.4 Build Preparation (Make App Ready)
 
 **Step 1: Switch Flutter to production mode**
 
-In your Flutter project, make sure:
+Make sure:
 
-- API URL is production (not staging/dev)  
-- Debug prints are removed or disabled  
-- No test data is used  
-- ProGuard / R8 rules are correct if you use code shrinking (`minifyEnabled true`)  
+- API is production (not dev/staging)  
+- Debug logs are removed or gated off  
+- No test data used  
 
-**Step 2: Clean project (important before build)**
+**Step 2: Clean project**
 
 ```bash
 flutter clean
 flutter pub get
 ```
 
-This removes old build cache.
+**Step 3: Set version number**
 
-**Step 3: Open Android project (optional but useful)**
-
-You can open `android/` in Android Studio to sync Gradle and catch configuration errors early:
-
-```bash
-# From project root — open the android folder in Android Studio, or:
-cd android && ./gradlew :app:assembleRelease --dry-run
-```
-
-Check:
-
-- No Gradle sync errors  
-- `applicationId`, signing config, and SDK levels are as expected  
-
-**Step 4: Set version number**
-
-Open `pubspec.yaml`:
+Open `pubspec.yaml` and set:
 
 ```yaml
 version: 1.0.0+1
 ```
 
-Simple rule (Flutter maps this to Android):
+Rules:
 
-- `1.0.0` → **versionName** (user-visible on Play)  
-- `+1` → **versionCode** (integer; must **increase** for every Play upload)  
+- `1.0.0` = visible version (users see on Play)  
+- `+1` = **versionCode** — must increase on **every** upload  
 
-**Step 5: Build release App Bundle (preferred on Play)**
+**Step 4: Build Android App Bundle**
 
 ```bash
 flutter build appbundle --release
 ```
 
-Output is typically:
+Output file:
 
 `build/app/outputs/bundle/release/app-release.aab`
 
-Google Play’s standard upload format is **AAB** (not APK) for new store listings. Use APK only if you have a specific distribution need outside this SOP.
+👉 **Google Play requires `.aab` format** for standard store distribution (not APK for this flow).
 
-If the build succeeds, you are ready to upload the `.aab` to Play Console.
+### 2.5 Store Listing Setup (What users will see)
 
-### 2.4 Store Listing Preparation (What users will see on Google Play)
+**Step 1: Fill app details in Play Console**
 
-This is where you prepare everything visible to Google reviewers and users.
+Go to **Store listing** (wording in the console may vary slightly).
 
-**Step 1: Prepare store listing text**
+Fill in:
 
-In Play Console → **Grow users** → **Store presence** → **Main store listing** (paths may shift slightly as the UI updates):
+- App name  
+- Short description  
+- Full description  
+- App icon  
+- Feature graphic  
 
-- Short description, full description  
-- App icon, feature graphic  
-- Support email / URL, optional marketing URL  
-
-**Step 2: Prepare screenshots and graphics**
-
-You need phone (and possibly tablet / large screen) screenshots per [current specs](https://support.google.com/googleplay/android-developer/answer/9866151).
+**Step 2: Upload screenshots**
 
 Make sure:
 
+- Real app screens (not fake UI)  
 - No broken UI  
-- Real app content (not dummy data)  
 - Main features are shown clearly  
 
-**Step 3: Privacy, content, and declarations**
+**Step 3: Complete required forms**
 
-Complete required sections honestly, including:
+You must fill:
 
-- **Data safety** form (what data is collected / shared)  
-- **Privacy policy** URL (usually mandatory)  
-- Content rating questionnaire  
-- Target audience / ads declarations if applicable  
+- **Data safety** form  
+- **Privacy policy** URL  
+- **Content rating**  
+- **Target audience**  
 
-Missing or inaccurate declarations are a common rejection reason.
+Wrong or incomplete info here increases **rejection risk** — one of the fastest ways to get stuck in review.
 
-### 2.5 Upload & Submission (Send App to Google Play)
+### 2.6 Upload & First Release
 
-**Step 1: Choose a release track**
+**Step 1: Choose release track**
 
-For the first public launch you still typically:
+You can choose:
 
-- Upload to **Closed testing** or **Open testing** first (recommended), then promote to **Production**, **or**  
-- Go straight to **Production** if your organization already validated internally  
+- **Internal testing** (recommended first)  
+- **Closed testing**  
+- **Production** (direct release)  
 
-In **Release** → pick the track → **Create new release**.
+**Step 2: Upload `.aab` file**
 
-**Step 2: Upload the App Bundle**
+Go to **Release** → **Create new release** → upload `app-release.aab`.
 
-- Upload `app-release.aab`  
-- Add release notes (even for first version — e.g. “Initial release”)  
-- Save; resolve any Play Console errors (version code conflicts, missing compliance, etc.)  
+**Step 3: Add release notes**
 
-**Step 3: Review release and send for review**
+Examples:
 
-Use **Preview and confirm** / **Review release** (wording varies). Fix blocking issues (policy, missing forms, country targeting).
+- Initial release  
+- First version of the app  
 
-When ready, **Send** the release for **Google Play review** (for production or open testing as configured).
+**Step 4: Review and submit**
 
-**Step 4: Provide test credentials if needed**
+Fix any warnings:
 
-If the app requires login, add **App access** instructions in Play Console (test account, demo mode, or license keys) so reviewers can sign in.
+- Missing privacy info  
+- Version conflicts  
+- Policy issues  
 
-### 2.6 Release (Go Live)
+Then click **Submit for review**.  
+👉 Fix warnings first — do not submit with blocking policy or version errors.
+
+### 2.7 Release (Go Live)
 
 **Step 1: Wait for Google review**
 
-Google checks policy, behavior, and declared data use. Timing varies (often hours to a few days).
+Google will:
 
-**Step 2: Managed publishing (recommended control)**
+- Check app behavior  
+- Check policy compliance  
+- Validate data declarations  
 
-If **managed publishing** is on, the update stays **approved but not live** until you manually publish — useful for coordinating marketing and server switches.
+Time: **a few hours to a few days** (varies).
 
-For the first launch, many teams use managed publishing or a **staged rollout** (e.g. 20% → 100%) to limit blast radius.
+**Step 2: After approval**
 
-**Step 3: After release**
+You choose:
 
-After the app is available on Play:
+- **Staged rollout** (recommended)  
+- **Full rollout**  
 
-- Install from Play on a real device and verify version  
-- Test login and main flows  
-- Watch **Android vitals** (ANRs, crashes) and your crash SDK (Crashlytics, Sentry) in the first hours  
+**Step 3: After release check**
 
-**Step 4: If rejected or issues**
+After the app goes live:
 
-- Read the **Policy status** / email and Play Console messages  
-- Fix policy, listing, or app issues  
-- Bump **versionCode** (and usually versionName)  
-- Upload a new `.aab` and resubmit  
+- Install from Play Store  
+- Test login and main features  
+- Check crashes (**Android vitals** / **Crashlytics**)  
+
+**Step 4: If rejected**
+
+Do this:
+
+- Read the rejection reason  
+- Fix the issue  
+- Increase **versionCode**  
+- Re-upload  
 
 ---
 
-## 3. Follow-Up Release (Update / Version Upgrade)
+## 3. Follow-Up Release (Update / Version Upgrade — Android)
 
 ### 3.1 Purpose (What this is for)
 
-This is used when your app is already live on Google Play and you want to ship a new version.
+This section is used when your Android app is **already live** on Google Play and you want to release a new version.
 
-This can happen when:
+Think of it like:  
+👉 **The app is already on users’ phones — you are sending an improved version through Google Play.**
+
+This usually happens when:
 
 - You fix bugs  
-- You add features  
+- You add new features  
 - You improve performance  
-- You update backend API or UI logic  
-
-Think of it as: **same app, improved version sent to Google Play again.**
+- You update API or backend logic  
 
 ### 3.2 Code Update (Do your changes first)
 
 **Step 1: Pull latest code**
 
-- Pull latest from Git (`main` / `develop`)  
-- Confirm your local tree matches what you expect to ship  
+Before doing anything:
 
-**Step 2: Do your development work**
+- Pull latest code from Git (`main` or `develop` branch)  
+- Make sure your local project is up to date  
 
-- Fix bugs, add features, improve UX  
-- Update API integration if needed  
+**Step 2: Do your changes**
+
+Do your development work:
+
+- Fix bugs  
+- Add new features  
+- Improve UI/UX  
+- Update API or business logic  
 
 **Step 3: Test everything locally**
 
-- Run on devices/emulators (`flutter run`)  
-- Test login, navigation, core features  
-- If anything is broken locally, stop and fix before building release  
+Before building release:
+
+- Run the app in debug mode  
+- Test main flows: login, navigation, core features  
+- Make sure nothing crashes  
+
+If something is broken here → fix it first before continuing.
 
 ### 3.3 Version Update (Very important step)
 
-Open `pubspec.yaml`, for example:
+Open `pubspec.yaml` and update version, for example:
 
 ```yaml
 version: 1.0.1+2
 ```
 
-Rules:
+Simple rules:
 
-- `1.0.1` = user-visible version (**versionName**)  
-- `+2` = **versionCode** — must be **strictly greater** than any build ever uploaded for this package on Play  
+- `1.0.1` = app version (users see this on Play)  
+- `+2` = **versionCode** (internal Google tracking)  
 
-Important:
+Important rules:
 
-- Every new upload needs a **higher versionCode** than the last one on Play (no exceptions)  
-- Bump **versionName** when you want users to see a new marketing version  
+- You **must** increase **versionCode** on every upload — even for a tiny bugfix  
+- Google Play **rejects** duplicate `versionCode`  
 
-| Release   | Example `pubspec` version |
-|-----------|---------------------------|
-| First     | `1.0.0+1`                 |
-| Second    | `1.0.1+2`                 |
-| Third     | `1.0.2+3`                 |
+Example:
 
-### 3.4 Build & Upload Preparation
+| Release      | Version   |
+|--------------|-----------|
+| First        | `1.0.0+1` |
+| Second       | `1.0.1+2` |
+| Third        | `1.0.2+3` |
+
+### 3.4 Build Preparation (Make app ready again)
 
 **Step 1: Clean project (recommended)**
 
@@ -413,63 +429,120 @@ flutter clean
 flutter pub get
 ```
 
-**Step 2: Verify Android config**
+**Step 2: Check Android signing**
 
-- Signing config still valid (upload key not expired or rotated incorrectly)  
-- `applicationId` unchanged  
-- No Gradle errors  
+Make sure:
 
-**Step 3: Build release bundle**
+- Keystore still exists  
+- `key.properties` is correct  
+- Signing config is not broken  
+
+If signing fails → fix before continuing.
+
+**Step 3: Build App Bundle**
 
 ```bash
 flutter build appbundle --release
 ```
 
-If this succeeds, upload the new `.aab`.
+Output:
+
+`build/app/outputs/bundle/release/app-release.aab`
+
+This file is what you upload to Google Play.
 
 ### 3.5 Submission (Send new version to Google Play)
 
-**Step 1: Create release in the right track**
+**Step 1: Go to Play Console**
 
-Production updates: **Release** → **Production** → **Create new release** (or edit draft).
+Open your app → **Release** section.
 
-**Step 2: Upload the new App Bundle**
+Choose **Production** or **Internal / Closed testing** (if you need a gate first).
 
-- Upload the new `.aab`  
-- Ensure versionCode is higher than the live build  
+**Step 2: Create new release**
 
-**Step 3: Release notes**
+Click **Create new release** → upload the new `.aab`.
 
-Fill **Release notes** (“What’s new”) with short, user-facing bullets.
+Make sure:
 
-**Step 4: Review and send for review**
+- `versionCode` is higher than the previous release  
+- No errors shown in Play Console  
 
-Complete any new compliance prompts, then submit for review.
+**Step 3: Write release notes**
+
+Keep it short and user-friendly, for example:
+
+- Fixed login bug  
+- Improved performance  
+- UI improvements  
+- Bug fixes and stability improvements  
+
+**Step 4: Review release**
+
+Check:
+
+- Missing privacy declarations  
+- Policy warnings  
+- Version conflicts  
+
+Fix any blocking issue before continuing.
+
+**Step 5: Submit for review**
+
+Click **Submit for review**. Google will process your update.
 
 ### 3.6 Release (Go Live)
 
 **Step 1: Wait for Google review**
 
-Google may scan changes in behavior, permissions, and data safety relevance.
+Google will:
 
-**Step 2: Rollout strategy**
+- Check app behavior  
+- Check policy compliance  
+- Verify data safety declarations  
 
-- **Staged rollout** — increase percentage gradually (recommended for risky changes)  
-- **Full rollout** — 100% when confident  
-- **Managed publishing** — hold until you click publish after approval  
+**Step 2: Choose rollout method**
+
+After approval:
+
+- **Staged rollout** (recommended): e.g. 5% → 20% → 50% → 100%  
+- **Full rollout** (immediate release to everyone)  
+
+**Recommended:**  
+👉 Use staged rollout for safety.
 
 **Step 3: After release**
 
-- Confirm new **versionName** on a device installed from Play  
-- Re-test main flows  
-- Monitor vitals, ANRs, and crash dashboards  
+Once the update is live:
 
-**Step 4: If rejected or blocked**
+- Install from Play Store  
+- Test main features  
+- Check crash rate  
+- Monitor Android vitals  
 
-- Read Play’s messages carefully  
-- Fix app or declaration issues  
+**Step 4: If something goes wrong**
+
+If issues appear after release:
+
+- **Pause rollout** immediately (if staged rollout is still in progress)  
+- Fix the issue in code  
 - Increase **versionCode** again  
-- Re-upload and resubmit  
+- Re-upload a new build  
+
+### Summary of Update Release Flow
+
+When updating the app:
+
+1. Pull latest code  
+2. Make changes  
+3. Test locally  
+4. Update version name + **versionCode**  
+5. Build `.aab`  
+6. Upload to Play Console  
+7. Fill release notes  
+8. Submit for review  
+9. Roll out gradually  
+10. Monitor after release  
 
 ---
 
@@ -477,119 +550,310 @@ Google may scan changes in behavior, permissions, and data safety relevance.
 
 ### 4.1 Purpose (What this is for)
 
-This stage starts right after users can install your app from Google Play.
+This phase starts **immediately** after the app is released to Google Play.
 
-Think of it as: **the app is live; your job is to watch if anything breaks or users complain.**
+Think of it like:  
+👉 **The app is now used by real users — monitor whether everything stays stable.**
 
-Main focus:
+At this stage your job is to:
 
-- Is the app stable?  
-- Are users happy?  
-- ANRs / crashes under control?  
-- Do we need a hotfix?  
+- Monitor crashes  
+- Watch user complaints  
+- Check backend stability  
+- Ensure a new release does not break production  
 
-### 4.2 Stability Monitoring (Check if app is healthy)
+Many issues **only appear** after real users start using the app.
 
-**Step 1: Check crashes and ANRs daily**
+### 4.2 Immediate Post-Release Verification (First 1–2 Hours)
 
-Use:
+This is the **most important** monitoring window.
 
-- Firebase Crashlytics / Sentry  
-- Play Console → **Quality** → **Android vitals** (crashes, ANRs, excessive wakeups, etc.)  
+Right after rollout:
 
-Watch:
+**Step 1: Install app from Play Store yourself**
 
-- Spikes after a release  
-- Stack traces tied to specific screens or devices  
-- **ANR** rate (Android-specific “app not responding”)  
+Do **not** only test the debug build.
 
-**Step 2: Check app performance**
+Install directly from the **Google Play Store** production version, then test:
 
-- Cold start time  
-- API latency and error rates  
+- Login / logout  
+- Navigation  
+- API loading  
+- Push notifications (if applicable)  
+- Payment flow (if applicable)  
+
+👉 This confirms the **release build** behaves correctly for users.
+
+**Step 2: Verify correct version released**
+
+Check:
+
+- `versionName`  
+- `versionCode`  
+- Release notes  
+
+Make sure users received the **correct** build (not an old artifact by mistake).
+
+**Step 3: Monitor crash spikes immediately**
+
+Open:
+
+- Firebase Crashlytics  
+- Sentry  
+- **Android vitals** (Play Console)  
+
+Watch for:
+
+- Sudden crash increase  
+- ANR increase  
+- Startup crash  
+
+If startup crashes spike → users may not even open the app. Treat as **P0** immediately.
+
+**Step 4: Check backend / API traffic**
+
+Coordinate with the backend team if needed.
+
+Monitor:
+
+- API error rate  
+- Login failures  
+- Server CPU spikes  
+- Timeout increases  
+
+👉 Sometimes the **app release is fine**, but the **backend** cannot handle traffic.
+
+### 4.3 Stability Monitoring (Daily Monitoring)
+
+**Step 1: Check crash reports daily**
+
+Go to:
+
+- Firebase Crashlytics  
+- Sentry  
+- Google Play Console → **Android vitals**  
+
+Monitor:
+
+- Crash-free users %  
+- Top crash screen  
+- Affected Android version  
+- Affected device model  
+
+**The same crash repeated many times** → treat as a real production issue.
+
+**Step 2: Monitor ANR (App Not Responding)**
+
+ANRs matter a lot on Android.
+
+Common causes:
+
+- Heavy work on the UI thread  
+- Blocked main thread  
+- Slow database query  
+- Poor API handling  
+
+If ANRs increase → users feel freezes / lag. Play may also reduce visibility if ANRs are too high.
+
+**Step 3: Monitor app performance**
+
+Check:
+
+- App startup speed  
+- API loading speed  
+- Image loading performance  
+- Memory usage  
+- Battery impact (if applicable)  
+
+Common user complaints:
+
+- “App slow after update”  
+- “Phone becomes hot”  
+- “Battery drain”  
+
+These often indicate a **performance regression**.
+
+**Step 4: Watch device-specific issues**
+
+Android is fragmented. Check:
+
+- Samsung-only issue?  
+- Xiaomi-only issue?  
+- Android 13-only issue?  
+- Tablet-only issue?  
+
+Some bugs only reproduce on **specific** devices.
+
+### 4.4 User Feedback Monitoring
+
+**Step 1: Check Play Store reviews**
+
+Open **Play Console → Ratings & reviews**.
+
+Watch for:
+
+- Repeated complaints  
+- Sudden rating drop  
+- Negative reviews after an update  
+
+Important keywords:
+
+- crash  
+- login fail  
+- slow  
+- cannot open  
+- payment failed  
+
+If **multiple** users report the same thing → assume the issue is **real**.
+
+**Step 2: Monitor support channels**
+
+Check:
+
+- WhatsApp support  
+- Customer service tickets  
+- Email support  
+- Internal bug reports  
+
+Pay attention to:
+
+- Same issue repeated  
+- Urgent business impact  
+- High-priority customer complaints  
+
+**Step 3: Group feedback properly**
+
+Do **not** react message-by-message in isolation.
+
+Group into:
+
+- Crashes  
+- UI bugs  
+- Performance issues  
+- Feature requests  
+- Backend issues  
+
+This helps prioritize fixes.
+
+### 4.5 Analytics Monitoring (Understand user behavior)
+
+**Step 1: Monitor active users**
+
+Check:
+
+- DAU (Daily Active Users)  
+- MAU (Monthly Active Users)  
+
+If DAU **suddenly drops** after a release → the release likely introduced a serious issue.
+
+**Step 2: Monitor user flow**
+
+Track:
+
 - Login success rate  
-- “Stuck loading” / blank screen patterns  
+- Checkout / payment completion  
+- Screen drop-off rate  
+- Onboarding completion  
 
-**Step 3: Identify patterns**
+If users stop at the same screen → likely **UX issue** or **hidden bug**.
 
-- Same crash on one manufacturer / Android version?  
-- Same API failing?  
-- ANRs on main thread due to heavy work?  
+**Step 3: Monitor API health**
 
-Classify: UI, backend, device-specific, or Play system behavior.
+Check:
 
-### 4.3 User Feedback (What users are saying)
+- API timeout rate  
+- 4xx / 5xx errors  
+- Slow endpoints  
+- Database performance  
 
-**Step 1: Play Store reviews**
+👉 Sometimes the Flutter app is healthy but the **backend** is failing.
 
-In Play Console → **Grow users** → **Ratings and reviews** (wording may vary):
+**Step 4: Monitor notification delivery (if using push)**
 
-- Read recent reviews and reply where helpful  
-- Watch for repeated complaints (crash, login, payment)  
+Check:
 
-**Step 2: Support channels**
+- Firebase notification delivery  
+- Token registration issues  
+- Delayed notifications  
 
-WhatsApp, email, tickets — same discipline as iOS: repeated themes are signal.
+If notifications fail → users may think the app is “broken.”
 
-**Step 3: Group feedback**
+### 4.6 Security & Store Monitoring
 
-Bucket into bugs, feature requests, and performance — prioritize by severity and frequency.
+**Step 1: Watch Play Console warnings**
 
-### 4.4 Analytics Monitoring (Understand user behavior)
+Google Play may show:
 
-**Step 1: Active users**
+- Policy warnings  
+- SDK security warnings  
+- Outdated dependency alerts  
 
-- DAU / MAU from analytics (Firebase, Amplitude, etc.)  
+Do not ignore these — some warnings can eventually **block updates** or lead to **removal** if ignored long-term.
 
-Sharp drops after a release warrant investigation.
+**Step 2: Monitor SDK compatibility**
 
-**Step 2: User flows**
+Check:
 
-- Funnels: where do users drop?  
-- Login failures vs successes  
+- Target SDK requirements  
+- Deprecated API usage  
+- Play policy changes  
 
-**Step 3: Backend health**
+Google updates requirements **frequently**.
 
-- API 5xx / 429 rates  
-- Timeouts  
-
-Backend failures often look like “app broken” in reviews.
-
-### 4.5 Incident Handling (What to do when something breaks)
+### 4.7 Incident Handling (What to do when something breaks)
 
 **Step 1: Classify severity**
 
 | Level | Meaning | Action |
 |-------|---------|--------|
-| **P0** (Critical) | Startup crash, login broken for most users, payments down | Hotfix **now** |
-| **P1** (High) | Major feature broken but app partly usable | Patch quickly |
-| **P2** (Low) | Minor UI / edge-case bugs | Next planned release |
+| **P0** | App unusable / startup crash / login broken | Immediate hotfix |
+| **P1** | Major feature issue | Fast patch |
+| **P2** | Minor issue | Next release |
 
-**Step 2: Decide action**
+**Step 2: Decide response**
 
-- **P0** → hotfix track  
-- **P1** → scheduled patch  
+- **P0** → immediate hotfix  
+- **P1** → quick update release  
 - **P2** → backlog  
 
 **Step 3: Prepare hotfix if needed**
 
-- Small branch, minimal change set  
-- New **versionCode** for every upload  
+If the issue is critical:
 
-**Step 4: Inform team**
+- Create a hotfix branch  
+- Fix **only** the affected issue  
+- Increase **versionCode**  
+- Rebuild and upload quickly  
 
-Share what broke, ETA, and verification plan with dev, product, and support.
+Do **not** mix new features into a hotfix.
 
-### Summary of Monitoring Phase
+**Step 4: Inform internal team**
 
-After release, your daily routine is:
+Always notify:
 
-1. Watch crashes and ANRs  
-2. Read user feedback  
-3. Monitor analytics and APIs  
-4. Decide if a fix is needed  
+- Developers  
+- Support team  
+- Product owner  
+- Backend team (if API-related)  
 
-**Goal:** keep the app stable and users happy.
+Everyone should understand:
+
+- Impact  
+- Fix timeline  
+- Workaround (if any)  
+
+### 4.8 Summary of Monitoring Phase
+
+After release, your routine should be:
+
+- Monitor crashes & ANRs  
+- Monitor backend health  
+- Check user feedback  
+- Monitor analytics  
+- Detect release problems early  
+- Prepare a hotfix if needed  
+
+👉 **Goal:** keep production stable and reduce user impact as fast as possible.
 
 ---
 
@@ -597,121 +861,309 @@ After release, your daily routine is:
 
 ### 5.1 Purpose (What this is for)
 
-Used when production is seriously broken and you cannot wait for a normal release train.
+This flow is used when something **critical** breaks in production and **cannot** wait for the normal release cycle.
 
-Examples:
+Think of it like:  
+👉 **Production has a serious issue — fix and release as fast and safely as possible.**
 
-- Startup crash affecting many users  
-- Login broken broadly  
-- Payments or another critical path broken  
-- Severe backend incident surfaced in the app  
+Usually used for:
 
-### 5.2 Identify the Problem (Confirm it is really urgent)
+- App crash on startup  
+- Login completely broken  
+- Payment failure  
+- Critical API issue  
+- Major production bug affecting many users  
 
-**Step 1: Confirm the issue is real**
+Hotfix releases should always focus on:  
+👉 **Fixing the problem as fast and safely as possible** (minimal extra risk).
 
-- Crash / ANR spike in vitals  
-- Multiple independent user reports  
-- Support alignment  
-- Local reproduction when possible  
+### 5.2 Confirm the Issue First (Do not panic release)
 
-**Step 2: Check severity**
+**Step 1: Confirm issue is real**
 
-- **P0** → hotfix immediately  
-- **P1** → fast patch  
-- **P2** → normal cycle  
+Before creating a hotfix, check:
 
-Only **P0** / critical **P1** belong in this hotfix flow.
+- Firebase Crashlytics  
+- Android vitals  
+- Support complaints  
+- Backend logs  
 
-### 5.3 Create Hotfix Branch (Start fixing immediately)
+Confirm:
 
-**Step 1: Create branch**
+- The issue affects real users  
+- The issue is reproducible (when possible)  
+- It is not a one-off isolated user problem  
+
+👉 Do **not** ship a hotfix only because **one** user reported something strange.
+
+**Step 2: Check impact level**
+
+| Level | Meaning | Action |
+|-------|---------|--------|
+| **P0** | App unusable / startup crash / login broken | Immediate hotfix |
+| **P1** | Major feature partially broken | Fast patch |
+| **P2** | Minor issue | Next normal release |
+
+Only **P0** and urgent **P1** should trigger the emergency release flow.
+
+**Step 3: Decide whether rollout should be paused**
+
+If the issue comes from the latest release:
+
+- Go to Google Play Console  
+- **Pause staged rollout** immediately (if rollout is still active)  
+
+This limits how many users receive the broken version.
+
+### 5.3 Create Hotfix Branch
+
+**Step 1: Create dedicated hotfix branch**
 
 Examples:
 
 - `hotfix/login-crash`  
-- `hotfix/anr-main-thread`  
+- `hotfix/payment-failure`  
 
-**Step 2: Fix ONLY the problem**
+Keep the branch name focused and simple.
 
-- No feature work, no drive-by refactors  
-- Minimal diff, easy to review in minutes  
+**Step 2: Fix ONLY the affected issue**
 
-**Step 3: Test locally**
+Do **not**:
 
-- Reproduce and verify fix  
-- Smoke-test main user journeys  
+- Add new features  
+- Refactor unrelated code  
+- Upgrade dependencies unnecessarily unless required for the fix  
 
-### 5.4 Increase Version (Required before upload)
+Hotfix should contain the **smallest possible safe change**.  
+👉 Emergency releases must **reduce** risk, not create new risk.  
+👉 Emergency releases must **reduce** risk, not create new risk.
+
+**Step 3: Review root cause**
+
+Before coding blindly, check:
+
+- Why the issue happened  
+- When it started  
+- Whether backend is involved  
+- Whether it is device-specific  
+
+This avoids “fake fixes” that do not address the real cause.
+
+### 5.4 Testing Before Release (Never skip even during emergency)
+
+**Step 1: Reproduce issue locally**
+
+Try to reproduce:
+
+- The same crash  
+- The same API failure  
+- The same broken flow  
+
+If you cannot reproduce → investigate more before releasing.
+
+**Step 2: Verify fix works**
+
+After fixing:
+
+- Repeat the same steps  
+- Confirm the issue is gone  
+- Confirm you did not introduce obvious new breakage  
+
+**Step 3: Test critical flows again**
+
+Even during a hotfix, always test:
+
+- Login  
+- App startup  
+- API loading  
+- Navigation  
+- Payment flow (if applicable)  
+
+Hotfixes can accidentally break unrelated areas.
+
+**Step 4: Test release build (important)**
+
+Do **not** only test debug mode.
+
+Build a **release** `.aab` (or install the release build) and validate the **actual** release configuration.
+
+Some issues only happen in **release** mode.
+
+### 5.5 Version Update (Required before upload)
+
+Open `pubspec.yaml` and update version, for example:
 
 ```yaml
 version: 1.0.2+4
 ```
 
-**versionCode** (`+4` here) must exceed whatever is already on Play.
+Rules reminder:
 
-### 5.5 Build Hotfix Version
+- Always increase **versionCode**  
+- Google Play rejects duplicate **versionCode**  
+- Emergency fixes still require a new **versionCode**  
+
+### 5.6 Build Hotfix Release
+
+**Step 1: Clean project**
 
 ```bash
 flutter clean
 flutter pub get
+```
+
+**Step 2: Build App Bundle**
+
+```bash
 flutter build appbundle --release
 ```
 
-### 5.6 Upload Hotfix to Google Play
+Output:
 
-**Step 1: Create production (or patched track) release**
+`build/app/outputs/bundle/release/app-release.aab`
 
-Upload the new `.aab` to the same track users receive (usually **Production**).
+**Step 3: Verify correct build generated**
 
-**Step 2: Release notes**
+Before upload:
 
-Clearly state this is a **critical bugfix** (users and Google both read this).
+- Verify `versionName`  
+- Verify `versionCode`  
+- Verify correct environment / API endpoints  
 
-**Step 3: Submit for review**
+Wrong-environment release is a common production mistake.
 
-Send for review; fix any blocking policy or form issues immediately.
+### 5.7 Upload Emergency Release
 
-### 5.7 Fast Review & Rollout (Important for emergencies)
+**Step 1: Go to Google Play Console**
 
-- Write concise **review notes** for Google: what broke, what you changed, scope of impact  
-- If rollout is already bad, consider **halt** on a staged rollout (if applicable) while the fix is reviewed  
-- Play does not offer a guaranteed Apple-style “expedited review,” but clear notes + legitimate regressions are still important  
-- After approval, prefer **immediate smaller staged rollout** (e.g. 5–20%) then expand after vitals look good  
+Open your app → **Production** release section (or the track your users receive).
 
-### 5.8 Release Hotfix
+**Step 2: Create emergency release**
 
-**Step 1: After approval**
+Upload the new `.aab`.
 
-Publish (or enable managed publish step) as soon as you are ready.
+Double-check:
 
-**Step 2: Verify**
+- Correct **versionCode**  
+- Correct build artifact  
+- Release notes updated  
 
-- Install from Play on a clean device  
-- Confirm crash/ANR rates fall  
-- Spot-check the broken scenario  
+**Step 3: Write release notes clearly**
 
-### 5.9 Post Hotfix Review (Very important)
+Examples:
 
-After the emergency:
+- Fixed startup crash affecting some users  
+- Fixed login issue after latest update  
+- Emergency stability improvements  
 
-1. **Check the root cause** — Why did it happen? Could it be prevented?  
-2. **Document** — Incident log, timeline, contributing factors  
-3. **Improve process** — Tests, monitoring alerts, feature flags, rollout discipline  
+Keep notes simple and honest.
 
-### Summary of Hotfix Flow
+### 5.8 Rollout Strategy (Very important)
 
-When production breaks:
+**Step 1: Prefer staged rollout first**
+
+Even for a hotfix, it is often safer to roll out gradually first, for example:
+
+- 5% → 20% → 50% → 100%  
+
+Reason: verify the hotfix does **not** create a new production issue.
+
+**Step 2: Monitor immediately after rollout**
+
+After rollout:
+
+- Monitor crash rate  
+- Monitor ANR  
+- Monitor support complaints  
+- Monitor backend load  
+
+The first **1–2 hours** are critical.
+
+**Step 3: Stop rollout if a new issue appears**
+
+If a new serious issue appears:
+
+- Halt rollout immediately  
+- Investigate before continuing  
+
+Never continue rollout blindly.
+
+### 5.9 Communication During Incident
+
+**Step 1: Inform internal team**
+
+Always update:
+
+- Developers  
+- Support team  
+- Product owner  
+- Backend team  
+
+Include:
+
+- What happened  
+- Severity level  
+- Estimated fix time  
+- Workaround (if available)  
+
+**Step 2: Prepare support response**
+
+Support should know:
+
+- What users may experience  
+- Whether a workaround exists  
+- Expected resolution timing  
+
+This reduces customer confusion.
+
+### 5.10 Post-Incident Review (Very important)
+
+**Step 1: Investigate root cause**
+
+After the issue stabilizes, review:
+
+- Why the bug escaped testing  
+- Whether monitoring missed warning signs  
+- Whether process failed somewhere  
+
+**Step 2: Improve prevention**
+
+Add:
+
+- Better validation  
+- Automated tests  
+- Monitoring alerts  
+- QA checklist improvements  
+
+**Goal:** prevent the same incident from happening again.
+
+**Step 3: Document incident**
+
+Record internally:
+
+- Issue summary  
+- Affected version  
+- Impact  
+- Fix applied  
+- Timeline  
+
+This helps future troubleshooting.
+
+### 5.11 Summary of Hotfix Flow
+
+When a critical production issue happens:
 
 1. Confirm the issue is real  
-2. Classify severity (P0 / P1)  
-3. Create hotfix branch  
-4. Fix **only** the issue  
-5. Test locally  
-6. Increase version / **versionCode**  
-7. Build `appbundle`  
-8. Upload to Play Console  
-9. Clear review notes; manage rollout safely  
-10. Publish as soon as appropriate  
-11. Verify in production  
-12. Document root cause  
+2. Classify severity  
+3. Pause rollout if needed  
+4. Create hotfix branch  
+5. Fix only the affected issue  
+6. Test carefully (including release build)  
+7. Increase **versionCode**  
+8. Build release `.aab`  
+9. Upload emergency release  
+10. Roll out carefully  
+11. Monitor production closely  
+12. Document the incident and improve process  
+
+👉 **Goal:** restore production stability as fast and safely as possible.
