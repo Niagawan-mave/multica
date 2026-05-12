@@ -78,18 +78,139 @@ In Play Console, click **Create app** and complete the initial questionnaire (ap
 
 You will get an empty **app** with its own Play Console dashboard. The **package name** (application ID) is chosen at creation time and **cannot be changed later** — it must match your Flutter Android project (`applicationId` in `android/app/build.gradle.kts` or `android/app/build.gradle`).
 
-**Step 3: Signing (where many teams get stuck)**
+**Step 3: Signing — upload keystore and `key.properties` (where many teams get stuck)**
 
-Google Play requires a **signed** release build. Typical setup:
+Google Play needs a **signed** release build. With **Play App Signing** (default), you keep an **upload key**; Google holds the app-signing key users receive.
 
-- Create an **upload keystore** (your team holds the `.jks` / `.keystore` and passwords).  
-- Enable **Play App Signing** (recommended/default): Google re-signs with a Google-managed key for distribution; you only manage the **upload key**.  
-- Wire Gradle to use the keystore via `key.properties` (do **not** commit secrets — use CI secrets or local files ignored by Git).  
+**Rules**
+
+- Never commit `key.properties`, keystore files, or passwords to Git.  
+- Add secrets to `android/.gitignore` (see below) and inject them in CI from a secret store.  
+- Back up the keystore + passwords in a team password manager. **If you lose the upload key and cannot use Play’s reset flow, you may be unable to ship updates.**
+
+---
+
+**A) You already have a keystore from your team**
+
+You should receive:
+
+- A file such as `upload-keystore.jks` (or `.keystore`)  
+- **Store password** (keystore password)  
+- **Key password** (often the same as store password; confirm)  
+- **Key alias** (e.g. `upload`)  
+
+Put the keystore where your `storeFile` path can point to it. Two common layouts:
+
+- Keystore in **`android/app/`** (next to `build.gradle`): use `storeFile=upload-keystore.jks` in `key.properties`.  
+- Keystore in **`android/`** (parent of `app/`): use `storeFile=../upload-keystore.jks` (paths are resolved from **`android/app/`** when Gradle uses `file(...)` in `app/build.gradle`).
+
+Create **`android/key.properties`** at the **android** project root (same level as `settings.gradle` — **not** inside `android/app/`):
+
+```properties
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=../upload-keystore.jks
+```
+
+Example above assumes the keystore file is **`android/upload-keystore.jks`**. If you instead put the file in **`android/app/upload-keystore.jks`**, use `storeFile=upload-keystore.jks`.
+
+Skip to **D) Wire Gradle** below.
+
+---
+
+**B) Create a new upload keystore (first app or new key)**
+
+1. Install a JDK (or use Android Studio’s embedded JDK so `keytool` is on your `PATH`).  
+2. From a safe directory (often your project’s `android/` folder):
+
+```bash
+cd android
+keytool -genkey -v -keystore upload-keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+- You will be prompted for **keystore password** and **key password** (you can set them the same; record both).  
+- `-alias upload` is a common alias; you can choose another name — it must match `keyAlias` in `key.properties`.  
+- `-validity 10000` is ~27 years; adjust if your policy requires.  
+
+3. Create **`android/key.properties`** next to the keystore (same contents as in **A)**), using the passwords and alias you just chose. If you created the file inside **`android/`** as `android/upload-keystore.jks`, use:
+
+```properties
+storePassword=…
+keyPassword=…
+keyAlias=upload
+storeFile=../upload-keystore.jks
+```
+
+If you moved the keystore into **`android/app/`**, use `storeFile=upload-keystore.jks` instead.
+
+---
+
+**C) Keep secrets out of Git**
+
+In **`android/.gitignore`**, ensure at least:
+
+```gitignore
+key.properties
+*.jks
+*.keystore
+```
+
+If the keystore lives outside `android/`, still ignore `key.properties` and never commit the keystore path if it embeds secrets.
+
+---
+
+**D) Wire Gradle to load `key.properties`**
+
+Flutter’s [official Android signing steps](https://docs.flutter.dev/deployment/android#sign-the-app) show the full file. Summary for **`android/app/build.gradle`** (Groovy):
+
+1. **Above** the `android {` block:
+
+```groovy
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+```
+
+2. **Inside** `android {`:
+
+```groovy
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+```
+
+3. **Inside** `buildTypes { release { ... } }`, set:
+
+```groovy
+            signingConfig signingConfigs.release
+```
+
+If you use **`android/app/build.gradle.kts`**, the same idea applies: load `Properties` from `rootProject.file("key.properties")` and map `signingConfigs.release` — follow Android’s Kotlin DSL signing docs or align with your template.
+
+Then run **`flutter build appbundle --release`**. If signing fails, check: path to `storeFile`, alias, passwords, and that `key.properties` is really under **`android/`**.
+
+---
+
+**E) Play App Signing on first upload**
+
+The first time you upload an `.aab`, Play Console will guide you to accept **Play App Signing**. Keep a secure backup of the **upload** keystore; Google manages the rest for store installs.
+
+---
+
+**F) Match package name and SDK policy**
 
 Make sure:
 
 - `applicationId` / namespace matches the package name registered in Play Console **exactly**  
-- `minSdk`, `targetSdk`, and `compileSdk` meet [Play’s targets](https://developer.android.com/google/play/requirements/target-sdk) (they change over time — check current policy)  
+- `minSdk`, `targetSdk`, and `compileSdk` meet [Play’s targets](https://developer.android.com/google/play/requirements/target-sdk) (policy changes over time — check current requirements)  
 
 **Step 4: (Recommended) Internal testing track first**
 
