@@ -80,31 +80,26 @@ You will get an empty **app** with its own Play Console dashboard. The **package
 
 **Step 3: Signing — upload keystore and `key.properties` (where many teams get stuck)**
 
-Google Play needs a **signed** release build. With **Play App Signing** (default), you keep an **upload key**; Google holds the app-signing key users receive.
+Google Play needs a **signed** release build. With **Play App Signing** (default), you keep an **upload key**; Google holds the app-signing key that end users receive.
 
-**Rules**
+Follow **either** Option A **or** Option B below. When that option is done, continue with **Common steps** in order.
+
+**Rules (always)**
 
 - Never commit `key.properties`, keystore files, or passwords to Git.  
-- Add secrets to `android/.gitignore` (see below) and inject them in CI from a secret store.  
-- Back up the keystore + passwords in a team password manager. **If you lose the upload key and cannot use Play’s reset flow, you may be unable to ship updates.**
+- Back up the keystore and passwords in a team password manager. **Losing the upload key** (without going through Google’s reset process) **can block future updates.**  
+- In CI, inject `key.properties` or secrets from your secret store — do not hardcode in the repo.  
 
----
+**Option A — Use a keystore your team already created**
 
-**A) You already have a keystore from your team**
+**Step 1:** Confirm you have all four: the keystore file (`.jks` or `.keystore`), **store password**, **key password**, and **key alias** (e.g. `upload`). If anything is missing, ask whoever owns release signing.
 
-You should receive:
+**Step 2:** Copy the keystore into your Flutter project. Pick one location and stay consistent:
 
-- A file such as `upload-keystore.jks` (or `.keystore`)  
-- **Store password** (keystore password)  
-- **Key password** (often the same as store password; confirm)  
-- **Key alias** (e.g. `upload`)  
+- **`android/upload-keystore.jks`** — then in `key.properties` use `storeFile=../upload-keystore.jks` (Gradle resolves this from `android/app/build.gradle`).  
+- **`android/app/upload-keystore.jks`** — then use `storeFile=upload-keystore.jks`.
 
-Put the keystore where your `storeFile` path can point to it. Two common layouts:
-
-- Keystore in **`android/app/`** (next to `build.gradle`): use `storeFile=upload-keystore.jks` in `key.properties`.  
-- Keystore in **`android/`** (parent of `app/`): use `storeFile=../upload-keystore.jks` (paths are resolved from **`android/app/`** when Gradle uses `file(...)` in `app/build.gradle`).
-
-Create **`android/key.properties`** at the **android** project root (same level as `settings.gradle` — **not** inside `android/app/`):
+**Step 3:** Create **`android/key.properties`** at the **android** root (next to `settings.gradle`, **not** inside `android/app/`). Example when the file is **`android/upload-keystore.jks`**:
 
 ```properties
 storePassword=YOUR_STORE_PASSWORD
@@ -113,42 +108,47 @@ keyAlias=upload
 storeFile=../upload-keystore.jks
 ```
 
-Example above assumes the keystore file is **`android/upload-keystore.jks`**. If you instead put the file in **`android/app/upload-keystore.jks`**, use `storeFile=upload-keystore.jks`.
+Replace `YOUR_*` and `keyAlias` with your real values. If the keystore lives under **`android/app/`**, use `storeFile=upload-keystore.jks` instead.
 
-Skip to **D) Wire Gradle** below.
+Then go to **Common steps** below.
 
 ---
 
-**B) Create a new upload keystore (first app or new key)**
+**Option B — Create a new upload keystore (first app or new key)**
 
-1. Install a JDK (or use Android Studio’s embedded JDK so `keytool` is on your `PATH`).  
-2. From a safe directory (often your project’s `android/` folder):
+**Step 1:** Install a **JDK** (or use Android Studio’s bundled JDK) so `keytool` is available in a terminal. On macOS/Linux you can run `keytool -help` to verify.
+
+**Step 2:** Open a terminal, go to your app’s **`android/`** folder, and generate the keystore:
 
 ```bash
 cd android
 keytool -genkey -v -keystore upload-keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 ```
 
-- You will be prompted for **keystore password** and **key password** (you can set them the same; record both).  
-- `-alias upload` is a common alias; you can choose another name — it must match `keyAlias` in `key.properties`.  
-- `-validity 10000` is ~27 years; adjust if your policy requires.  
+Answer the prompts. You choose **keystore password** and **key password** (they may be the same). The **alias** in the command is `upload` unless you change `-alias` — whatever you use must match `keyAlias` in the next steps.
 
-3. Create **`android/key.properties`** next to the keystore (same contents as in **A)**), using the passwords and alias you just chose. If you created the file inside **`android/`** as `android/upload-keystore.jks`, use:
+**Step 3:** Store **keystore password**, **key password**, and **alias** in your team password manager. You will need them for every release build.
+
+**Step 4:** Create **`android/key.properties`** at the **android** root (same place as in Option A). Because `upload-keystore.jks` was created inside **`android/`**, use:
 
 ```properties
-storePassword=…
-keyPassword=…
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
 keyAlias=upload
 storeFile=../upload-keystore.jks
 ```
 
-If you moved the keystore into **`android/app/`**, use `storeFile=upload-keystore.jks` instead.
+If you later move the keystore into **`android/app/`**, change `storeFile` to `upload-keystore.jks` to match.
+
+**Step 5:** (Optional) If your security policy forbids keeping the `.jks` under the repo folder, move it to a secure path and set `storeFile` to an **absolute** path in `key.properties` for local builds; CI should copy or mount the keystore and generate `key.properties` without committing it.
+
+Then go to **Common steps** below.
 
 ---
 
-**C) Keep secrets out of Git**
+**Common steps (after Option A or Option B)**
 
-In **`android/.gitignore`**, ensure at least:
+**Step 1:** Add secrets to **`android/.gitignore`** so they are never committed:
 
 ```gitignore
 key.properties
@@ -156,15 +156,7 @@ key.properties
 *.keystore
 ```
 
-If the keystore lives outside `android/`, still ignore `key.properties` and never commit the keystore path if it embeds secrets.
-
----
-
-**D) Wire Gradle to load `key.properties`**
-
-Flutter’s [official Android signing steps](https://docs.flutter.dev/deployment/android#sign-the-app) show the full file. Summary for **`android/app/build.gradle`** (Groovy):
-
-1. **Above** the `android {` block:
+**Step 2:** Wire **Gradle** to read `key.properties`. Flutter’s [Sign the app](https://docs.flutter.dev/deployment/android#sign-the-app) guide has the full example. For **`android/app/build.gradle`** (Groovy), add **above** `android {`:
 
 ```groovy
 def keystoreProperties = new Properties()
@@ -174,7 +166,7 @@ if (keystorePropertiesFile.exists()) {
 }
 ```
 
-2. **Inside** `android {`:
+Inside **`android {`**, add:
 
 ```groovy
     signingConfigs {
@@ -187,30 +179,19 @@ if (keystorePropertiesFile.exists()) {
     }
 ```
 
-3. **Inside** `buildTypes { release { ... } }`, set:
+Inside **`buildTypes { release { ... } }`**, set:
 
 ```groovy
             signingConfig signingConfigs.release
 ```
 
-If you use **`android/app/build.gradle.kts`**, the same idea applies: load `Properties` from `rootProject.file("key.properties")` and map `signingConfigs.release` — follow Android’s Kotlin DSL signing docs or align with your template.
+If you use **`build.gradle.kts`**, apply the same pattern with Kotlin DSL (load `Properties` from `rootProject.file("key.properties")` and assign `signingConfigs.getByName("release")`).
 
-Then run **`flutter build appbundle --release`**. If signing fails, check: path to `storeFile`, alias, passwords, and that `key.properties` is really under **`android/`**.
+**Step 3:** Verify signing end-to-end:
 
----
-
-**E) Play App Signing on first upload**
-
-The first time you upload an `.aab`, Play Console will guide you to accept **Play App Signing**. Keep a secure backup of the **upload** keystore; Google manages the rest for store installs.
-
----
-
-**F) Match package name and SDK policy**
-
-Make sure:
-
-- `applicationId` / namespace matches the package name registered in Play Console **exactly**  
-- `minSdk`, `targetSdk`, and `compileSdk` meet [Play’s targets](https://developer.android.com/google/play/requirements/target-sdk) (policy changes over time — check current requirements)  
+- Run **`flutter build appbundle --release`**. If it fails, re-check `key.properties` location, `storeFile` path (relative to `android/app/`), alias, and passwords.  
+- Plan for the **first** Play upload: accept **Play App Signing** when Play Console prompts you, and keep the **upload** keystore backed up.  
+- Confirm **`applicationId` / namespace** matches the Play Console package name **exactly**, and that **`minSdk`**, **`targetSdk`**, and **`compileSdk`** meet [Google Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk) (policy updates over time).
 
 **Step 4: (Recommended) Internal testing track first**
 
