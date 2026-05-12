@@ -23,6 +23,7 @@
   - [4.3 User Feedback](#43-user-feedback-what-users-are-saying)
   - [4.4 Analytics Monitoring](#44-analytics-monitoring-understand-user-behavior)
   - [4.5 Incident Handling](#45-incident-handling-what-to-do-when-something-breaks)
+  - [Summary of Monitoring Phase](#summary-of-monitoring-phase)
 - [5. Hotfix & Emergency Release Flow](#5-hotfix--emergency-release-flow)
   - [5.1 Purpose](#51-purpose-what-this-is-for-2)
   - [5.2 Identify the Problem](#52-identify-the-problem-confirm-it-is-really-urgent)
@@ -33,6 +34,7 @@
   - [5.7 Fast Review Request](#57-fast-review-request-important-for-emergencies)
   - [5.8 Release Hotfix](#58-release-hotfix)
   - [5.9 Post Hotfix Review](#59-post-hotfix-review-very-important)
+  - [Summary of Hotfix Flow](#summary-of-hotfix-flow)
 
 ---
 
@@ -40,11 +42,12 @@
 
 This document defines a simplified, role-based workflow for publishing and maintaining Flutter iOS applications on the Apple App Store.
 
-It is structured into three main operational modes:
+It is structured into four main operational modes:
 
-1. **First Time Release** — initial launch  
-2. **Follow-Up Release** — updates / new versions  
-3. **Monitoring Phase** — post-release operations  
+1. **First Time Release** — initial launch → [Section 2](#2-first-time-app-release-initial-launch)  
+2. **Follow-Up Release** — updates / new versions → [Section 3](#3-follow-up-release-update--version-upgrade)  
+3. **Monitoring Phase** — post-release operations → [Section 4](#4-monitoring-phase-post-release)  
+4. **Hotfix / Emergency Phase** — maintenance when production is broken → [Section 5](#5-hotfix--emergency-release-flow)  
 
 Each section is designed so developers only follow what is relevant to their current task.
 
@@ -766,7 +769,7 @@ After release:
 
 After an emergency fix:
 
-1. **Check root cause** — Why did it happen? Could it be prevented?  
+1. **Check the root cause** — Why did it happen? Could it be prevented?  
 2. **Document** — Add to internal bug list; record what went wrong  
 3. **Improve process** — Add validation, test cases, better monitoring  
 
