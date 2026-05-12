@@ -60,7 +60,7 @@ Think of it like this: you are not just building the app — you are also settin
 
 ### 2.2 Setup Phase (Prepare Apple Side First)
 
-#### Step 1: Login to Apple Developer
+**Step 1: Login to Apple Developer**
 
 Go to Apple Developer account and make sure:
 
@@ -69,7 +69,7 @@ Go to Apple Developer account and make sure:
 
 If you cannot see App Store Connect access, ask your team admin.
 
-#### Step 2: Create App in App Store Connect
+**Step 2: Create App in App Store Connect**
 
 Go to App Store Connect and click **New App**. Fill in:
 
@@ -80,7 +80,7 @@ Go to App Store Connect and click **New App**. Fill in:
 
 Once done, Apple will create a “container” for your app.
 
-#### Step 3: Setup Signing (This is where most people get stuck)
+**Step 3: Setup Signing (This is where most people get stuck)**
 
 Open Apple Developer portal. You need:
 
@@ -99,7 +99,7 @@ If you are using automatic signing in Xcode:
 
 ### 2.3 Build Preparation (Make App Ready for Release)
 
-#### Step 1: Switch Flutter to production mode
+**Step 1: Switch Flutter to production mode**
 
 In your Flutter project, make sure:
 
@@ -107,7 +107,7 @@ In your Flutter project, make sure:
 - Debug prints are removed or disabled  
 - No test data is used  
 
-#### Step 2: Clean project (important before build)
+**Step 2: Clean project (important before build)**
 
 ```bash
 flutter clean
@@ -116,7 +116,7 @@ flutter pub get
 
 This removes the old build cache.
 
-#### Step 3: Open iOS project in Xcode
+**Step 3: Open iOS project in Xcode**
 
 ```bash
 open ios/Runner.xcworkspace
@@ -128,7 +128,7 @@ Inside Xcode check:
 - Bundle ID is correct  
 - No errors shown at top  
 
-#### Step 4: Set version number
+**Step 4: Set version number**
 
 Open `pubspec.yaml` and set:
 
@@ -141,7 +141,7 @@ Simple rule:
 - `1.0.0` = app version (users see this)  
 - `+1` = build number (must increase every upload)  
 
-#### Step 5: Build release version
+**Step 5: Build release version**
 
 ```bash
 flutter build ios --release
@@ -153,7 +153,7 @@ If this succeeds, your app is ready for Xcode archive.
 
 This is where you prepare everything visible to Apple reviewers and users.
 
-#### Step 1: Prepare app information
+**Step 1: Prepare app information**
 
 In App Store Connect, fill in:
 
@@ -162,7 +162,7 @@ In App Store Connect, fill in:
 - Keywords (helps search)  
 - Support URL / Privacy Policy URL  
 
-#### Step 2: Prepare screenshots
+**Step 2: Prepare screenshots**
 
 You need screenshots for iPhone sizes. Make sure:
 
@@ -170,7 +170,7 @@ You need screenshots for iPhone sizes. Make sure:
 - Real app content (not dummy data)  
 - Main features are shown clearly  
 
-#### Step 3: Privacy information
+**Step 3: Privacy information**
 
 You must tell Apple:
 
@@ -182,14 +182,14 @@ Also add a Privacy Policy link.
 
 ### 2.5 Upload & Submission (Send App to Apple)
 
-#### Step 1: Open Xcode Archive
+**Step 1: Open Xcode Archive**
 
 In Xcode:
 
 - **Product → Archive**  
 - Wait until build finishes  
 
-#### Step 2: Upload to Apple
+**Step 2: Upload to Apple**
 
 After archive finishes:
 
@@ -199,7 +199,7 @@ After archive finishes:
 - Click **Upload**  
 - Wait for processing  
 
-#### Step 3: Check App Store Connect
+**Step 3: Check App Store Connect**
 
 In the browser:
 
@@ -208,7 +208,7 @@ In the browser:
 
 If it fails, fix signing or build issues.
 
-#### Step 4: Submit for review
+**Step 4: Submit for review**
 
 - Select build  
 - Fill review form  
@@ -217,7 +217,7 @@ If it fails, fix signing or build issues.
 
 ### 2.6 Release (Go Live)
 
-#### Step 1: Wait for Apple review
+**Step 1: Wait for Apple review**
 
 Apple will:
 
@@ -227,7 +227,7 @@ Apple will:
 
 This can take hours to days.
 
-#### Step 2: If approved
+**Step 2: If approved**
 
 You choose:
 
@@ -236,7 +236,7 @@ You choose:
 
 Recommended: manual release the first time.
 
-#### Step 3: After release
+**Step 3: After release**
 
 After the app goes live:
 
@@ -244,7 +244,7 @@ After the app goes live:
 - Test login and main features  
 - Check crash reports (very important in the first few hours)  
 
-#### Step 4: If rejected
+**Step 4: If rejected**
 
 Don’t panic:
 
@@ -272,14 +272,14 @@ Think of it as: **same app, improved version sent to Apple again.**
 
 ### 3.2 Code Update (Do your changes first)
 
-#### Step 1: Pull latest code
+**Step 1: Pull latest code**
 
 Before doing anything:
 
 - Pull latest code from Git (`main` / `develop` branch)  
 - Make sure your local project is updated  
 
-#### Step 2: Do your development work
+**Step 2: Do your development work**
 
 Apply your changes:
 
@@ -288,7 +288,7 @@ Apply your changes:
 - Improve UI/UX  
 - Update API integration if needed  
 
-#### Step 3: Test everything locally
+**Step 3: Test everything locally**
 
 Before building:
 
@@ -326,7 +326,7 @@ Example progression:
 
 ### 3.4 Build & Upload Preparation
 
-#### Step 1: Clean project (recommended)
+**Step 1: Clean project (recommended)**
 
 ```bash
 flutter clean
@@ -335,7 +335,7 @@ flutter pub get
 
 This removes old cached builds and avoids weird issues.
 
-#### Step 2: Open iOS project in Xcode
+**Step 2: Open iOS project in Xcode**
 
 ```bash
 open ios/Runner.xcworkspace
@@ -347,7 +347,7 @@ Inside Xcode check:
 - Bundle ID unchanged  
 - No red errors  
 
-#### Step 3: Build release version
+**Step 3: Build release version**
 
 ```bash
 flutter build ios --release
@@ -357,11 +357,11 @@ If this succeeds, you are ready to upload.
 
 ### 3.5 Submission (Send new version to Apple)
 
-#### Step 1: Archive in Xcode
+**Step 1: Archive in Xcode**
 
 **Product → Archive** — wait until build completes.
 
-#### Step 2: Upload to App Store Connect
+**Step 2: Upload to App Store Connect**
 
 After archive finishes:
 
@@ -371,13 +371,13 @@ After archive finishes:
 
 Wait until Apple processes the build.
 
-#### Step 3: Select build in App Store Connect
+**Step 3: Select build in App Store Connect**
 
 - Open your app  
 - Go to the new version page (e.g. `1.0.1`)  
 - Select uploaded build  
 
-#### Step 4: Fill “What’s New”
+**Step 4: Fill “What’s New”**
 
 Write a short explanation for users, for example:
 
@@ -388,13 +388,13 @@ Write a short explanation for users, for example:
 
 Keep it short and easy to understand.
 
-#### Step 5: Submit for review
+**Step 5: Submit for review**
 
 Click **Submit for Review**. Apple will review the new version again.
 
 ### 3.6 Release (Go Live)
 
-#### Step 1: Wait for Apple review
+**Step 1: Wait for Apple review**
 
 Apple will:
 
@@ -402,7 +402,7 @@ Apple will:
 - Check app stability  
 - Ensure no policy violations  
 
-#### Step 2: If approved
+**Step 2: If approved**
 
 Choose release method:
 
@@ -411,7 +411,7 @@ Choose release method:
 
 Recommended: use **manual release** so you control rollout timing.
 
-#### Step 3: After release
+**Step 3: After release**
 
 After the update goes live:
 
@@ -420,7 +420,7 @@ After the update goes live:
 - Monitor crash reports  
 - Check user feedback  
 
-#### Step 4: If rejected
+**Step 4: If rejected**
 
 If Apple rejects the update:
 
@@ -450,7 +450,7 @@ Main focus:
 
 ### 4.2 Stability Monitoring (Check if app is healthy)
 
-#### Step 1: Check crash reports daily
+**Step 1: Check crash reports daily**
 
 Go to your crash tools, for example:
 
@@ -466,7 +466,7 @@ Check:
 
 If you see a **sudden spike in crashes** → treat as urgent.
 
-#### Step 2: Check app performance
+**Step 2: Check app performance**
 
 Open your monitoring dashboard and look at:
 
@@ -483,7 +483,7 @@ Watch for user complaints like:
 
 These usually mean performance or API issues.
 
-#### Step 3: Identify pattern (very important)
+**Step 3: Identify pattern (very important)**
 
 Don’t fix random reports one by one. Instead check:
 
@@ -501,7 +501,7 @@ This helps you find where the real problem is.
 
 ### 4.3 User Feedback (What users are saying)
 
-#### Step 1: Check App Store reviews
+**Step 1: Check App Store reviews**
 
 In App Store Connect:
 
@@ -517,7 +517,7 @@ Pay attention to:
 
 If multiple users report the same issue → likely a real bug.
 
-#### Step 2: Check support messages
+**Step 2: Check support messages**
 
 Check:
 
@@ -531,7 +531,7 @@ Look for:
 - Same issue from different users  
 - Critical complaints (login / payment)  
 
-#### Step 3: Group feedback
+**Step 3: Group feedback**
 
 Don’t treat each message as a separate problem. Group into:
 
@@ -543,7 +543,7 @@ This helps you decide what to fix first.
 
 ### 4.4 Analytics Monitoring (Understand user behavior)
 
-#### Step 1: Check active users
+**Step 1: Check active users**
 
 Look at:
 
@@ -552,7 +552,7 @@ Look at:
 
 If DAU **suddenly drops** after release → something may be wrong in the app.
 
-#### Step 2: Check user flow
+**Step 2: Check user flow**
 
 Track user journey:
 
@@ -562,7 +562,7 @@ Track user journey:
 
 If many users drop at the same screen → that screen likely has a bug or bad UX.
 
-#### Step 3: Check API health
+**Step 3: Check API health**
 
 Look at backend metrics:
 
@@ -574,7 +574,7 @@ If the API is failing → the problem may be backend, not the Flutter app.
 
 ### 4.5 Incident Handling (What to do when something breaks)
 
-#### Step 1: Classify severity
+**Step 1: Classify severity**
 
 | Level | Meaning | Action |
 |-------|---------|--------|
@@ -582,7 +582,7 @@ If the API is failing → the problem may be backend, not the Flutter app.
 | **P1** (High) | Feature not working but app usable, partial API failure | Fix ASAP in next update or quick patch |
 | **P2** (Low) | UI misalignment, small bug, minor issue | Fix in next planned release |
 
-#### Step 2: Decide action
+**Step 2: Decide action**
 
 Based on severity:
 
@@ -590,7 +590,7 @@ Based on severity:
 - **P1** → Schedule quick update  
 - **P2** → Add to backlog  
 
-#### Step 3: Prepare hotfix if needed
+**Step 3: Prepare hotfix if needed**
 
 If critical issue found:
 
@@ -599,7 +599,7 @@ If critical issue found:
 - Increase build number  
 - Release as fast as possible  
 
-#### Step 4: Inform team
+**Step 4: Inform team**
 
 Always update developers, product owner, and support so everyone knows:
 
@@ -637,7 +637,7 @@ Usually used when:
 
 ### 5.2 Identify the Problem (Confirm it is really urgent)
 
-#### Step 1: Confirm issue is real
+**Step 1: Confirm issue is real**
 
 Before acting fast, make sure:
 
@@ -648,7 +648,7 @@ Before acting fast, make sure:
 
 If only one user reports → might not be urgent. If many users report → treat as real.
 
-#### Step 2: Check severity
+**Step 2: Check severity**
 
 - **P0** → App broken / unusable → **HOTFIX NOW**  
 - **P1** → Important feature broken → fix quickly  
@@ -658,7 +658,7 @@ Only **P0** and critical **P1** go into the hotfix flow.
 
 ### 5.3 Create Hotfix Branch (Start fixing immediately)
 
-#### Step 1: Create new branch
+**Step 1: Create new branch**
 
 From main code, create a branch such as:
 
@@ -667,7 +667,7 @@ From main code, create a branch such as:
 
 Keep names simple and clear.
 
-#### Step 2: Fix ONLY the problem
+**Step 2: Fix ONLY the problem**
 
 Important rules:
 
@@ -677,7 +677,7 @@ Important rules:
 
 Examples: fix crash line, API endpoint, null error, login logic.
 
-#### Step 3: Test fix locally
+**Step 3: Test fix locally**
 
 Before building:
 
@@ -702,14 +702,14 @@ Rule reminder:
 
 ### 5.5 Build Hotfix Version
 
-#### Step 1: Clean project
+**Step 1: Clean project**
 
 ```bash
 flutter clean
 flutter pub get
 ```
 
-#### Step 2: Build release
+**Step 2: Build release**
 
 ```bash
 flutter build ios --release
@@ -719,17 +719,17 @@ If this passes → continue.
 
 ### 5.6 Upload Hotfix to Apple
 
-#### Step 1: Archive in Xcode
+**Step 1: Archive in Xcode**
 
 **Product → Archive** — wait until build completes.
 
-#### Step 2: Upload build
+**Step 2: Upload build**
 
 - Open **Organizer**  
 - Select archive  
 - **Distribute App** → upload to App Store Connect  
 
-#### Step 3: Select build in App Store Connect
+**Step 3: Select build in App Store Connect**
 
 - Open correct app version  
 - Select uploaded build  
@@ -746,15 +746,15 @@ If needed: request **expedited review** (Apple sometimes allows this for critica
 
 ### 5.8 Release Hotfix
 
-#### Step 1: Wait for approval
+**Step 1: Wait for approval**
 
 Apple will often review hotfixes faster.
 
-#### Step 2: Release immediately after approval
+**Step 2: Release immediately after approval**
 
 Choose manual release (recommended) or immediate release if needed.
 
-#### Step 3: Verify fix in production
+**Step 3: Verify fix in production**
 
 After release:
 
